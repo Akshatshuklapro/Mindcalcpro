@@ -1,0 +1,2385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> MindCalc PRO - Ultimate Learning Calculator</title>
+    <style>
+/* ============================
+   CSS VARIABLES FOR THEMING
+   ============================ */
+:root {
+    --bg-color: #f0f4f8;
+    --card-bg: #ffffff;
+    --text-color: #2d3748;
+    --primary-color: #4299e1;
+    --secondary-color: #667eea;
+    --accent-color: #48bb78;
+    --error-color: #f56565;
+    --border-color: #e2e8f0;
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --shadow-hover: 0 10px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Theme Presets */
+.theme-dark {
+    --bg-color: #1a202c;
+    --card-bg: #2d3748;
+    --text-color: #e2e8f0;
+    --border-color: #4a5568;
+}
+
+.theme-cyberpunk {
+    --bg-color: #0a0e27;
+    --card-bg: #1a1f3a;
+    --text-color: #00ff9f;
+    --primary-color: #ff006e;
+    --secondary-color: #8338ec;
+    --accent-color: #00ff9f;
+}
+
+.theme-sunset {
+    --bg-color: #ff6b6b;
+    --card-bg: #ffe66d;
+    --text-color: #4a4e69;
+    --primary-color: #ff9f1c;
+    --secondary-color: #e63946;
+}
+
+.theme-ocean {
+    --bg-color: #006d77;
+    --card-bg: #83c5be;
+    --text-color: #001219;
+    --primary-color: #0096c7;
+    --secondary-color: #00b4d8;
+}
+
+/* Mood-based themes */
+.mood-confident {
+    --primary-color: #ff6b6b;
+    --secondary-color: #ffd93d;
+    --card-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --text-color: #ffffff;
+}
+
+.mood-confused {
+    --primary-color: #a8dadc;
+    --secondary-color: #f1faee;
+    --card-bg: #f1faee;
+    --text-color: #457b9d;
+}
+
+.mood-sleepy {
+    --primary-color: #ff9f1c;
+    --secondary-color: #ffbf69;
+    --card-bg: #fff5e6;
+    --text-color: #2b2d42;
+}
+
+.mood-angry {
+    --primary-color: #4a90e2;
+    --secondary-color: #89cff0;
+    --card-bg: #e3f2fd;
+    --text-color: #1e3a8a;
+}
+
+/* ============================
+   BASE STYLES
+   ============================ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 20px;
+    transition: background 0.5s ease;
+}
+
+body.theme-dark {
+    background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+}
+
+body.theme-cyberpunk {
+    background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+}
+
+body.theme-sunset {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ffe66d 100%);
+}
+
+body.theme-ocean {
+    background: linear-gradient(135deg, #006d77 0%, #83c5be 100%);
+}
+
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* ============================
+   HEADER
+   ============================ */
+.header {
+    text-align: center;
+    margin-bottom: 20px;
+    color: white;
+    position: relative;
+}
+
+.header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 5px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.tagline {
+    font-size: 1rem;
+    opacity: 0.9;
+}
+
+.pro-badge {
+    background: linear-gradient(135deg, #ffd700, #ff8c00);
+    color: #000;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-weight: bold;
+    display: inline-block;
+    margin-top: 5px;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+/* ============================
+   STREAK & STATS BAR
+   ============================ */
+.stats-bar {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.stat-item {
+    background: var(--card-bg);
+    padding: 10px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: var(--shadow);
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+.stat-label {
+    font-size: 0.8rem;
+    color: var(--text-color);
+    opacity: 0.8;
+}
+
+/* ============================
+   THEME SWITCHER
+   ============================ */
+.theme-switcher {
+    background: var(--card-bg);
+    padding: 15px;
+    border-radius: 15px;
+    margin-bottom: 15px;
+    box-shadow: var(--shadow);
+}
+
+.theme-switcher label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.theme-buttons {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+
+.theme-btn {
+    padding: 8px;
+    border: 2px solid var(--border-color);
+    background: white;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.theme-btn:hover {
+    transform: scale(1.05);
+}
+
+.theme-btn.active {
+    border-color: var(--primary-color);
+    background: var(--primary-color);
+    color: white;
+}
+
+/* ============================
+   VOICE CONTROLS
+   ============================ */
+.voice-controls {
+    background: var(--card-bg);
+    padding: 15px;
+    border-radius: 15px;
+    margin-bottom: 15px;
+    box-shadow: var(--shadow);
+    text-align: center;
+}
+
+.voice-btn {
+    background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+    border: none;
+    color: white;
+    padding: 15px 30px;
+    border-radius: 25px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow);
+}
+
+.voice-btn:hover {
+    transform: scale(1.05);
+}
+
+.voice-btn.listening {
+    animation: voicePulse 1s infinite;
+    background: linear-gradient(135deg, #00ff9f, #00b4d8);
+}
+
+@keyframes voicePulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255, 107, 107, 0.7); }
+    50% { box-shadow: 0 0 20px 10px rgba(255, 107, 107, 0); }
+}
+
+.voice-feedback {
+    margin-top: 10px;
+    color: var(--text-color);
+    font-style: italic;
+}
+
+/* ============================
+   LEVEL & XP SYSTEM
+   ============================ */
+.level-card {
+    background: var(--card-bg);
+    padding: 20px;
+    border-radius: 15px;
+    margin-bottom: 15px;
+    box-shadow: var(--shadow);
+    transition: transform 0.3s ease;
+}
+
+.level-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+}
+
+.level-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.level-badge {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.xp-text {
+    color: var(--text-color);
+    font-weight: 600;
+}
+
+.xp-bar {
+    width: 100%;
+    height: 12px;
+    background: var(--border-color);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.xp-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+    border-radius: 10px;
+    transition: width 0.5s ease;
+    width: 0%;
+}
+
+/* ============================
+   ACHIEVEMENTS
+   ============================ */
+.achievements {
+    background: var(--card-bg);
+    padding: 15px;
+    border-radius: 15px;
+    margin-bottom: 15px;
+    box-shadow: var(--shadow);
+}
+
+.achievements h3 {
+    color: var(--text-color);
+    margin-bottom: 10px;
+    font-size: 1.2rem;
+}
+
+.achievement-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+}
+
+.achievement {
+    padding: 10px;
+    border-radius: 8px;
+    text-align: center;
+    background: var(--border-color);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.achievement.unlocked {
+    background: linear-gradient(135deg, #ffd700, #ff8c00);
+    transform: scale(1.1);
+}
+
+.achievement-icon {
+    font-size: 2rem;
+}
+
+.achievement-name {
+    font-size: 0.7rem;
+    margin-top: 5px;
+    color: var(--text-color);
+}
+
+/* ============================
+   PERSONALITY SELECTOR
+   ============================ */
+.personality-selector {
+    background: var(--card-bg);
+    padding: 15px;
+    border-radius: 15px;
+    margin-bottom: 15px;
+    box-shadow: var(--shadow);
+}
+
+.personality-selector label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.personality-buttons {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.personality-btn {
+    padding: 12px;
+    border: 2px solid var(--border-color);
+    background: white;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.personality-btn:hover {
+    transform: scale(1.05);
+    border-color: var(--primary-color);
+}
+
+.personality-btn.active {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    border-color: transparent;
+}
+
+/* ============================
+   MOOD CARD
+   ============================ */
+.mood-card {
+    background: var(--card-bg);
+    padding: 20px;
+    border-radius: 15px;
+    margin-bottom: 15px;
+    box-shadow: var(--shadow);
+    text-align: center;
+    transition: all 0.5s ease;
+}
+
+.mood-emoji {
+    font-size: 3rem;
+    margin-bottom: 10px;
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.mood-text {
+    font-size: 1.1rem;
+    color: var(--text-color);
+    font-weight: 500;
+}
+
+/* ============================
+   AI TUTOR CHAT
+   ============================ */
+.ai-tutor {
+    background: var(--card-bg);
+    padding: 20px;
+    border-radius: 15px;
+    margin-bottom: 15px;
+    box-shadow: var(--shadow);
+}
+
+.ai-tutor h3 {
+    color: var(--text-color);
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.chat-messages {
+    max-height: 200px;
+    overflow-y: auto;
+    margin-bottom: 15px;
+    padding: 10px;
+    background: var(--border-color);
+    border-radius: 10px;
+}
+
+.chat-message {
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.chat-message.ai {
+    background: var(--primary-color);
+    color: white;
+    margin-right: 20%;
+}
+
+.chat-message.user {
+    background: var(--accent-color);
+    color: white;
+    margin-left: 20%;
+}
+
+.chat-input-area {
+    display: flex;
+    gap: 10px;
+}
+
+.chat-input {
+    flex: 1;
+    padding: 10px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+.chat-send-btn {
+    padding: 10px 20px;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+/* ============================
+   CALCULATOR CARD
+   ============================ */
+.calculator-card {
+    background: var(--card-bg);
+    padding: 25px;
+    border-radius: 15px;
+    margin-bottom: 15px;
+    box-shadow: var(--shadow);
+    transition: all 0.5s ease;
+}
+
+.display {
+    background: var(--border-color);
+    padding: 20px;
+    border-radius: 10px;
+    text-align: right;
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+    min-height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    word-break: break-all;
+    color: var(--text-color);
+}
+
+.expression {
+    text-align: right;
+    padding: 5px 20px;
+    color: #718096;
+    font-size: 1rem;
+    min-height: 25px;
+}
+
+.calculator-modes {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.mode-btn {
+    flex: 1;
+    padding: 10px;
+    border: 2px solid var(--border-color);
+    background: white;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.mode-btn.active {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.buttons-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.btn {
+    padding: 20px;
+    border: none;
+    border-radius: 10px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-weight: 600;
+}
+
+.btn:hover {
+    transform: scale(1.05);
+    box-shadow: var(--shadow);
+}
+
+.btn:active {
+    transform: scale(0.98);
+}
+
+.btn-number {
+    background: #f7fafc;
+    color: var(--text-color);
+}
+
+.btn-number:hover {
+    background: #edf2f7;
+}
+
+.btn-operator {
+    background: var(--primary-color);
+    color: white;
+}
+
+.btn-operator:hover {
+    background: var(--secondary-color);
+}
+
+.btn-clear {
+    background: var(--error-color);
+    color: white;
+}
+
+.btn-equals {
+    background: var(--accent-color);
+    color: white;
+    font-size: 2rem;
+}
+
+.btn-advanced {
+    background: var(--secondary-color);
+    color: white;
+    font-size: 1.2rem;
+}
+
+/* ============================
+   HISTORY
+   ============================ */
+.history-card {
+    background: var(--card-bg);
+    padding: 20px;
+    border-radius: 15px;
+    margin-bottom: 15px;
+    box-shadow: var(--shadow);
+}
+
+.history-card h3 {
+    color: var(--text-color);
+    margin-bottom: 15px;
+}
+
+.history-list {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.history-item {
+    padding: 10px;
+    background: var(--border-color);
+    border-radius: 8px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.history-item:hover {
+    transform: translateX(5px);
+    background: var(--primary-color);
+    color: white;
+}
+
+/* ============================
+   INFORMATION CARDS
+   ============================ */
+.explanation-card,
+.reallife-card,
+.autohelp-card,
+.memory-card,
+.mistake-card {
+    background: var(--card-bg);
+    padding: 20px;
+    border-radius: 15px;
+    margin-bottom: 15px;
+    box-shadow: var(--shadow);
+    transition: all 0.5s ease;
+}
+
+.explanation-card h3,
+.reallife-card h3,
+.autohelp-card h3,
+.memory-card h3,
+.mistake-card h3 {
+    color: var(--text-color);
+    margin-bottom: 15px;
+    font-size: 1.3rem;
+}
+
+.explanation-content,
+.reallife-content,
+.autohelp-content,
+.memory-content,
+.mistake-content {
+    color: var(--text-color);
+    line-height: 1.8;
+    font-size: 1rem;
+}
+
+.why-section {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 2px solid var(--border-color);
+}
+
+.why-section h4 {
+    color: var(--primary-color);
+    margin-bottom: 10px;
+}
+
+.step {
+    background: var(--border-color);
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    border-left: 4px solid var(--primary-color);
+}
+
+.step-label {
+    font-weight: bold;
+    color: var(--primary-color);
+    display: block;
+    margin-bottom: 5px;
+}
+
+.hidden {
+    display: none;
+}
+
+/* ============================
+   MISTAKE HIGHLIGHT
+   ============================ */
+.mistake-card {
+    background: linear-gradient(135deg, #fff5f5 0%, #fed7d7 100%);
+    border: 2px solid var(--error-color);
+}
+
+.mistake-highlight {
+    background: #fef5e7;
+    padding: 10px;
+    border-radius: 8px;
+    margin: 10px 0;
+    border-left: 4px solid #f39c12;
+}
+
+/* ============================
+   PRACTICE MODE
+   ============================ */
+.practice-card {
+    background: var(--card-bg);
+    padding: 20px;
+    border-radius: 15px;
+    margin-bottom: 15px;
+    box-shadow: var(--shadow);
+}
+
+.practice-card h3 {
+    color: var(--text-color);
+    margin-bottom: 15px;
+}
+
+.practice-question {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--primary-color);
+    text-align: center;
+    margin: 20px 0;
+}
+
+.practice-options {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.practice-option {
+    padding: 15px;
+    background: var(--border-color);
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: center;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.practice-option:hover {
+    background: var(--primary-color);
+    color: white;
+    transform: scale(1.05);
+}
+
+.practice-option.correct {
+    background: var(--accent-color);
+    color: white;
+}
+
+.practice-option.wrong {
+    background: var(--error-color);
+    color: white;
+}
+
+/* ============================
+   TIMER CHALLENGE
+   ============================ */
+.timer-display {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--primary-color);
+    text-align: center;
+    margin: 10px 0;
+}
+
+.timer-display.warning {
+    color: var(--error-color);
+    animation: timerPulse 1s infinite;
+}
+
+@keyframes timerPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+/* ============================
+   ANIMATIONS
+   ============================ */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.explanation-card,
+.reallife-card,
+.autohelp-card {
+    animation: slideIn 0.5s ease;
+}
+
+/* ============================
+   RESPONSIVE DESIGN
+   ============================ */
+@media (max-width: 600px) {
+    .header h1 {
+        font-size: 2rem;
+    }
+    
+    .display {
+        font-size: 2rem;
+        padding: 15px;
+    }
+    
+    .btn {
+        padding: 15px;
+        font-size: 1.3rem;
+    }
+    
+    .personality-buttons {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .stats-bar {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .achievement-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 400px) {
+    .personality-buttons {
+        grid-template-columns: 1fr;
+    }
+    
+    .stats-bar {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ============================
+   SPECIAL EFFECTS
+   ============================ */
+.celebration {
+    animation: celebrate 0.6s ease;
+}
+
+@keyframes celebrate {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+.shake {
+    animation: shake 0.5s ease;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    75% { transform: translateX(10px); }
+}
+
+/* Confetti effect */
+.confetti {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    background: var(--primary-color);
+    position: absolute;
+    animation: confetti-fall 3s linear;
+}
+
+@keyframes confetti-fall {
+    to {
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0;
+    }
+}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header Section -->
+        <header class="header">
+            <h1>🧮 MindCalc PRO</h1>
+            <span class="pro-badge">ULTIMATE EDITION</span>
+            <p class="tagline">Your AI-Powered Learning Companion</p>
+        </header>
+
+        <!-- Stats Bar (Streak, Accuracy, Speed) -->
+        <div class="stats-bar">
+            <div class="stat-item">
+                <div class="stat-value" id="streakValue">0🔥</div>
+                <div class="stat-label">Streak</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="accuracyValue">0%</div>
+                <div class="stat-label">Accuracy</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="speedValue">0s</div>
+                <div class="stat-label">Avg Speed</div>
+            </div>
+        </div>
+
+        <!-- Theme Switcher -->
+        <div class="theme-switcher">
+            <label>🎨 Choose Theme:</label>
+            <div class="theme-buttons">
+                <button class="theme-btn active" data-theme="default">Default</button>
+                <button class="theme-btn" data-theme="dark">🌙 Dark</button>
+                <button class="theme-btn" data-theme="cyberpunk">⚡ Cyber</button>
+                <button class="theme-btn" data-theme="sunset">🌅 Sunset</button>
+                <button class="theme-btn" data-theme="ocean">🌊 Ocean</button>
+            </div>
+        </div>
+
+        <!-- Voice Controls -->
+        <div class="voice-controls">
+            <button class="voice-btn" id="voiceBtn" onclick="toggleVoice()">
+                🎤 Voice Mode
+            </button>
+            <div class="voice-feedback" id="voiceFeedback"></div>
+        </div>
+
+        <!-- Achievements -->
+        <div class="achievements">
+            <h3>🏆 Achievements</h3>
+            <div class="achievement-grid" id="achievementGrid">
+                <div class="achievement" data-achievement="first_calc">
+                    <div class="achievement-icon">🎯</div>
+                    <div class="achievement-name">First Calc</div>
+                </div>
+                <div class="achievement" data-achievement="streak_5">
+                    <div class="achievement-icon">🔥</div>
+                    <div class="achievement-name">5 Streak</div>
+                </div>
+                <div class="achievement" data-achievement="speed_demon">
+                    <div class="achievement-icon">⚡</div>
+                    <div class="achievement-name">Speed Demon</div>
+                </div>
+                <div class="achievement" data-achievement="perfect_10">
+                    <div class="achievement-icon">💯</div>
+                    <div class="achievement-name">Perfect 10</div>
+                </div>
+                <div class="achievement" data-achievement="night_owl">
+                    <div class="achievement-icon">🦉</div>
+                    <div class="achievement-name">Night Owl</div>
+                </div>
+                <div class="achievement" data-achievement="master">
+                    <div class="achievement-icon">👑</div>
+                    <div class="achievement-name">Math Master</div>
+                </div>
+                <div class="achievement" data-achievement="voice_user">
+                    <div class="achievement-icon">🎤</div>
+                    <div class="achievement-name">Voice Pro</div>
+                </div>
+                <div class="achievement" data-achievement="explorer">
+                    <div class="achievement-icon">🗺️</div>
+                    <div class="achievement-name">Explorer</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- XP & Level System -->
+        <div class="level-card">
+            <div class="level-info">
+                <span class="level-badge" id="levelBadge">Noob</span>
+                <span class="xp-text" id="xpText">0 XP</span>
+            </div>
+            <div class="xp-bar">
+                <div class="xp-fill" id="xpFill"></div>
+            </div>
+        </div>
+
+        <!-- AI Tutor Chat -->
+        <div class="ai-tutor hidden" id="aiTutor">
+            <h3>🤖 Ask AI Tutor</h3>
+            <div class="chat-messages" id="chatMessages"></div>
+            <div class="chat-input-area">
+                <input type="text" class="chat-input" id="chatInput" placeholder="Ask me anything about math...">
+                <button class="chat-send-btn" onclick="sendToAI()">Send</button>
+            </div>
+        </div>
+
+        <!-- Personality Selector -->
+        <div class="personality-selector">
+            <label>Choose Your Guide:</label>
+            <div class="personality-buttons">
+                <button class="personality-btn active" data-personality="teacher">👨‍🏫 Teacher</button>
+                <button class="personality-btn" data-personality="friendly">😄 Friendly</button>
+                <button class="personality-btn" data-personality="savage">😈 Savage</button>
+                <button class="personality-btn" data-personality="ai">🤖 AI</button>
+            </div>
+        </div>
+
+        <!-- Mood Detection Card -->
+        <div class="mood-card" id="moodCard">
+            <div class="mood-emoji" id="moodEmoji">😊</div>
+            <div class="mood-text" id="moodText">Ready to learn!</div>
+        </div>
+
+        <!-- Calculator Card -->
+        <div class="calculator-card" id="calculatorCard">
+            <!-- Calculator Modes -->
+            <div class="calculator-modes">
+                <button class="mode-btn active" data-mode="basic" onclick="setMode('basic')">Basic</button>
+                <button class="mode-btn" data-mode="advanced" onclick="setMode('advanced')">Advanced</button>
+                <button class="mode-btn" data-mode="practice" onclick="setMode('practice')">Practice</button>
+            </div>
+
+            <!-- Timer for Speed Challenge -->
+            <div class="timer-display hidden" id="timerDisplay">60s</div>
+
+            <div class="display" id="display">0</div>
+            <div class="expression" id="expression"></div>
+            
+            <div class="buttons-grid" id="buttonsGrid">
+                <!-- Basic mode buttons will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Practice Mode Card -->
+        <div class="practice-card hidden" id="practiceCard">
+            <h3>🎯 Practice Challenge</h3>
+            <div class="practice-question" id="practiceQuestion">What is 5 + 3?</div>
+            <div class="practice-options" id="practiceOptions"></div>
+        </div>
+
+        <!-- History Card -->
+        <div class="history-card hidden" id="historyCard">
+            <h3>📜 Calculation History</h3>
+            <div class="history-list" id="historyList"></div>
+        </div>
+
+        <!-- Mistake Highlight Section -->
+        <div class="mistake-card hidden" id="mistakeCard">
+            <h3>⚠️ Oops! Let me help</h3>
+            <div class="mistake-content" id="mistakeContent"></div>
+        </div>
+
+        <!-- Explanation Section -->
+        <div class="explanation-card hidden" id="explanationCard">
+            <h3>📚 Explain My Answer</h3>
+            <div class="explanation-content" id="explanationContent"></div>
+            
+            <div class="why-section" id="whySection">
+                <h4>🤔 Why This Method?</h4>
+                <div id="whyContent"></div>
+            </div>
+        </div>
+
+        <!-- Real-Life Translation -->
+        <div class="reallife-card hidden" id="reallifeCard">
+            <h3>🌍 Real-Life Example</h3>
+            <div class="reallife-content" id="reallifeContent"></div>
+        </div>
+
+        <!-- Auto Help Section -->
+        <div class="autohelp-card hidden" id="autohelpCard">
+            <h3>💡 Need Help?</h3>
+            <div class="autohelp-content" id="autohelpContent"></div>
+        </div>
+
+        <!-- Memory Section -->
+        <div class="memory-card hidden" id="memoryCard">
+            <h3>🧠 Memory Recall</h3>
+            <div class="memory-content" id="memoryContent"></div>
+        </div>
+    </div>
+
+    <script>
+/* ============================
+   GLOBAL STATE MANAGEMENT
+   ============================ */
+let currentInput = '0';
+let expression = '';
+let lastResult = null;
+let personality = 'teacher';
+let currentMode = 'basic';
+let currentTheme = 'default';
+let isVoiceMode = false;
+let recognition = null;
+
+// Behavior tracking for mood detection
+let behaviorTracker = {
+    inputSpeed: [],
+    backspaceCount: 0,
+    invalidAttempts: 0,
+    lastInputTime: Date.now(),
+    consecutiveErrors: 0,
+    calculationStartTime: null
+};
+
+// XP and Level System
+let gameState = {
+    xp: 0,
+    level: 'Noob',
+    totalCalculations: 0,
+    correctCalculations: 0,
+    weakOperations: {},
+    streak: 0,
+    maxStreak: 0,
+    achievements: [],
+    history: [],
+    totalTime: 0,
+    fastestTime: Infinity,
+    practiceScore: 0
+};
+
+// Practice mode
+let practiceMode = {
+    active: false,
+    currentQuestion: null,
+    correctAnswer: null,
+    score: 0,
+    questionsAnswered: 0
+};
+
+// Timer challenge
+let timerChallenge = {
+    active: false,
+    timeLeft: 60,
+    questionsCompleted: 0,
+    interval: null
+};
+
+/* ============================
+   INITIALIZATION
+   ============================ */
+document.addEventListener('DOMContentLoaded', function() {
+    loadGameState();
+    updateDisplay();
+    detectPersonality();
+    initThemeSwitcher();
+    initVoiceRecognition();
+    renderBasicButtons();
+    updateStats();
+});
+
+// Load saved data from localStorage
+function loadGameState() {
+    const saved = localStorage.getItem('mindcalc_pro_gamestate');
+    if (saved) {
+        gameState = JSON.parse(saved);
+        updateXPDisplay();
+        showMemoryRecall();
+        updateAchievements();
+        updateHistory();
+    }
+}
+
+// Save game state
+function saveGameState() {
+    localStorage.setItem('mindcalc_pro_gamestate', JSON.stringify(gameState));
+}
+
+/* ============================
+   THEME SYSTEM
+   ============================ */
+function initThemeSwitcher() {
+    const buttons = document.querySelectorAll('.theme-btn');
+    buttons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            buttons.forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            const theme = this.dataset.theme;
+            applyTheme(theme);
+        });
+    });
+}
+
+function applyTheme(theme) {
+    const body = document.body;
+    body.classList.remove('theme-dark', 'theme-cyberpunk', 'theme-sunset', 'theme-ocean');
+    
+    if (theme !== 'default') {
+        body.classList.add('theme-' + theme);
+    }
+    
+    currentTheme = theme;
+    unlockAchievement('explorer');
+}
+
+/* ============================
+   VOICE RECOGNITION SYSTEM
+   ============================ */
+function initVoiceRecognition() {
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        recognition = new SpeechRecognition();
+        recognition.continuous = false;
+        recognition.lang = 'en-US';
+        
+        recognition.onresult = function(event) {
+            const transcript = event.results[0][0].transcript.toLowerCase();
+            processVoiceCommand(transcript);
+        };
+        
+        recognition.onerror = function(event) {
+            document.getElementById('voiceFeedback').textContent = 'Voice error. Try again!';
+        };
+        
+        recognition.onend = function() {
+            if (isVoiceMode) {
+                document.getElementById('voiceBtn').classList.remove('listening');
+                isVoiceMode = false;
+            }
+        };
+    }
+}
+
+function toggleVoice() {
+    if (!recognition) {
+        alert('Voice recognition not supported in this browser!');
+        return;
+    }
+    
+    if (isVoiceMode) {
+        recognition.stop();
+        isVoiceMode = false;
+        document.getElementById('voiceBtn').classList.remove('listening');
+        document.getElementById('voiceFeedback').textContent = '';
+    } else {
+        recognition.start();
+        isVoiceMode = true;
+        document.getElementById('voiceBtn').classList.add('listening');
+        document.getElementById('voiceFeedback').textContent = 'Listening... Say a number or operation';
+        unlockAchievement('voice_user');
+    }
+}
+
+function processVoiceCommand(command) {
+    document.getElementById('voiceFeedback').textContent = `You said: "${command}"`;
+    
+    // Number recognition
+    const numbers = {
+        'zero': '0', 'one': '1', 'two': '2', 'three': '3', 'four': '4',
+        'five': '5', 'six': '6', 'seven': '7', 'eight': '8', 'nine': '9'
+    };
+    
+    // Check for numbers
+    for (let word in numbers) {
+        if (command.includes(word)) {
+            appendNumber(numbers[word]);
+            speak(`${word}`);
+            return;
+        }
+    }
+    
+    // Check for operations
+    if (command.includes('plus') || command.includes('add')) {
+        appendOperator('+');
+        speak('Plus');
+    } else if (command.includes('minus') || command.includes('subtract')) {
+        appendOperator('-');
+        speak('Minus');
+    } else if (command.includes('times') || command.includes('multiply')) {
+        appendOperator('*');
+        speak('Times');
+    } else if (command.includes('divide') || command.includes('divided')) {
+        appendOperator('/');
+        speak('Divided by');
+    } else if (command.includes('equals') || command.includes('calculate')) {
+        calculate();
+    } else if (command.includes('clear')) {
+        clearDisplay();
+        speak('Cleared');
+    }
+}
+
+function speak(text) {
+    if ('speechSynthesis' in window) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        speechSynthesis.speak(utterance);
+    }
+}
+
+/* ============================
+   CALCULATOR MODES
+   ============================ */
+function setMode(mode) {
+    currentMode = mode;
+    
+    // Update mode buttons
+    document.querySelectorAll('.mode-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.dataset.mode === mode) {
+            btn.classList.add('active');
+        }
+    });
+    
+    // Show/hide relevant sections
+    if (mode === 'basic') {
+        renderBasicButtons();
+        document.getElementById('practiceCard').classList.add('hidden');
+        document.getElementById('aiTutor').classList.add('hidden');
+        document.getElementById('historyCard').classList.add('hidden');
+    } else if (mode === 'advanced') {
+        renderAdvancedButtons();
+        document.getElementById('practiceCard').classList.add('hidden');
+        document.getElementById('aiTutor').classList.remove('hidden');
+        document.getElementById('historyCard').classList.remove('hidden');
+    } else if (mode === 'practice') {
+        document.getElementById('practiceCard').classList.remove('hidden');
+        startPracticeMode();
+    }
+}
+
+function renderBasicButtons() {
+    const grid = document.getElementById('buttonsGrid');
+    grid.innerHTML = `
+        <button class="btn btn-clear" onclick="clearDisplay()">AC</button>
+        <button class="btn btn-operator" onclick="backspace()">⌫</button>
+        <button class="btn btn-operator" onclick="appendOperator('/')">/</button>
+        <button class="btn btn-operator" onclick="appendOperator('*')">×</button>
+        
+        <button class="btn btn-number" onclick="appendNumber('7')">7</button>
+        <button class="btn btn-number" onclick="appendNumber('8')">8</button>
+        <button class="btn btn-number" onclick="appendNumber('9')">9</button>
+        <button class="btn btn-operator" onclick="appendOperator('-')">-</button>
+        
+        <button class="btn btn-number" onclick="appendNumber('4')">4</button>
+        <button class="btn btn-number" onclick="appendNumber('5')">5</button>
+        <button class="btn btn-number" onclick="appendNumber('6')">6</button>
+        <button class="btn btn-operator" onclick="appendOperator('+')">+</button>
+        
+        <button class="btn btn-number" onclick="appendNumber('1')">1</button>
+        <button class="btn btn-number" onclick="appendNumber('2')">2</button>
+        <button class="btn btn-number" onclick="appendNumber('3')">3</button>
+        <button class="btn btn-equals" onclick="calculate()" style="grid-row: span 2">=</button>
+        
+        <button class="btn btn-number" onclick="appendNumber('0')" style="grid-column: span 2">0</button>
+        <button class="btn btn-number" onclick="appendNumber('.')">.</button>
+    `;
+}
+
+function renderAdvancedButtons() {
+    const grid = document.getElementById('buttonsGrid');
+    grid.innerHTML = `
+        <button class="btn btn-clear" onclick="clearDisplay()">AC</button>
+        <button class="btn btn-advanced" onclick="appendOperator('^')">x²</button>
+        <button class="btn btn-advanced" onclick="appendFunction('sqrt')">√</button>
+        <button class="btn btn-operator" onclick="appendOperator('/')">/</button>
+        
+        <button class="btn btn-number" onclick="appendNumber('7')">7</button>
+        <button class="btn btn-number" onclick="appendNumber('8')">8</button>
+        <button class="btn btn-number" onclick="appendNumber('9')">9</button>
+        <button class="btn btn-operator" onclick="appendOperator('*')">×</button>
+        
+        <button class="btn btn-number" onclick="appendNumber('4')">4</button>
+        <button class="btn btn-number" onclick="appendNumber('5')">5</button>
+        <button class="btn btn-number" onclick="appendNumber('6')">6</button>
+        <button class="btn btn-operator" onclick="appendOperator('-')">-</button>
+        
+        <button class="btn btn-number" onclick="appendNumber('1')">1</button>
+        <button class="btn btn-number" onclick="appendNumber('2')">2</button>
+        <button class="btn btn-number" onclick="appendNumber('3')">3</button>
+        <button class="btn btn-operator" onclick="appendOperator('+')">+</button>
+        
+        <button class="btn btn-number" onclick="appendNumber('0')" style="grid-column: span 2">0</button>
+        <button class="btn btn-number" onclick="appendNumber('.')">.</button>
+        <button class="btn btn-equals" onclick="calculate()">=</button>
+    `;
+}
+
+/* ============================
+   PRACTICE MODE
+   ============================ */
+function startPracticeMode() {
+    practiceMode.active = true;
+    generatePracticeQuestion();
+}
+
+function generatePracticeQuestion() {
+    const operations = ['+', '-', '*', '/'];
+    const op = operations[Math.floor(Math.random() * operations.length)];
+    
+    let num1, num2, answer;
+    
+    switch(op) {
+        case '+':
+            num1 = Math.floor(Math.random() * 50) + 1;
+            num2 = Math.floor(Math.random() * 50) + 1;
+            answer = num1 + num2;
+            break;
+        case '-':
+            num1 = Math.floor(Math.random() * 50) + 20;
+            num2 = Math.floor(Math.random() * num1);
+            answer = num1 - num2;
+            break;
+        case '*':
+            num1 = Math.floor(Math.random() * 12) + 1;
+            num2 = Math.floor(Math.random() * 12) + 1;
+            answer = num1 * num2;
+            break;
+        case '/':
+            num2 = Math.floor(Math.random() * 10) + 1;
+            answer = Math.floor(Math.random() * 10) + 1;
+            num1 = num2 * answer;
+            break;
+    }
+    
+    practiceMode.currentQuestion = `${num1} ${op === '*' ? '×' : op} ${num2}`;
+    practiceMode.correctAnswer = answer;
+    
+    // Generate options
+    const options = [answer];
+    while (options.length < 4) {
+        const wrong = answer + (Math.floor(Math.random() * 10) - 5);
+        if (!options.includes(wrong) && wrong > 0) {
+            options.push(wrong);
+        }
+    }
+    
+    // Shuffle options
+    options.sort(() => Math.random() - 0.5);
+    
+    // Display question
+    document.getElementById('practiceQuestion').textContent = `What is ${practiceMode.currentQuestion}?`;
+    
+    // Display options
+    const optionsDiv = document.getElementById('practiceOptions');
+    optionsDiv.innerHTML = '';
+    options.forEach(opt => {
+        const btn = document.createElement('div');
+        btn.className = 'practice-option';
+        btn.textContent = opt;
+        btn.onclick = () => checkPracticeAnswer(opt);
+        optionsDiv.appendChild(btn);
+    });
+}
+
+function checkPracticeAnswer(selected) {
+    practiceMode.questionsAnswered++;
+    
+    const options = document.querySelectorAll('.practice-option');
+    options.forEach(opt => {
+        opt.style.pointerEvents = 'none';
+        if (parseInt(opt.textContent) === practiceMode.correctAnswer) {
+            opt.classList.add('correct');
+        } else if (parseInt(opt.textContent) === selected) {
+            opt.classList.add('wrong');
+        }
+    });
+    
+    if (selected === practiceMode.correctAnswer) {
+        practiceMode.score++;
+        gameState.streak++;
+        awardXP(15, 'Practice correct!');
+        speak('Correct!');
+        
+        if (gameState.streak >= 5) unlockAchievement('streak_5');
+        if (practiceMode.questionsAnswered >= 10 && practiceMode.score === 10) {
+            unlockAchievement('perfect_10');
+        }
+    } else {
+        gameState.streak = 0;
+        speak('Wrong! The answer is ' + practiceMode.correctAnswer);
+    }
+    
+    updateStats();
+    saveGameState();
+    
+    setTimeout(() => {
+        generatePracticeQuestion();
+    }, 2000);
+}
+
+/* ============================
+   PERSONALITY SYSTEM
+   ============================ */
+function detectPersonality() {
+    const buttons = document.querySelectorAll('.personality-btn');
+    buttons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            buttons.forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            personality = this.dataset.personality;
+        });
+    });
+}
+
+/* ============================
+   CALCULATOR CORE FUNCTIONS
+   ============================ */
+function updateDisplay() {
+    document.getElementById('display').textContent = currentInput;
+    document.getElementById('expression').textContent = expression;
+}
+
+function appendNumber(num) {
+    if (!behaviorTracker.calculationStartTime) {
+        behaviorTracker.calculationStartTime = Date.now();
+    }
+    
+    trackInputSpeed();
+    
+    if (currentInput === '0' && num !== '.') {
+        currentInput = num;
+    } else if (currentInput.length < 12) {
+        currentInput += num;
+    }
+    
+    updateDisplay();
+    checkForConfusion();
+}
+
+function appendOperator(op) {
+    trackInputSpeed();
+    
+    if (expression && !expression.endsWith(' ')) {
+        expression += ' ' + currentInput + ' ' + op;
+    } else if (expression.endsWith(' ')) {
+        expression = expression.slice(0, -2) + op;
+    } else {
+        expression = currentInput + ' ' + op;
+    }
+    
+    currentInput = '0';
+    updateDisplay();
+}
+
+function appendFunction(func) {
+    const num = parseFloat(currentInput);
+    if (func === 'sqrt') {
+        currentInput = String(Math.sqrt(num));
+        updateDisplay();
+    }
+}
+
+function clearDisplay() {
+    currentInput = '0';
+    expression = '';
+    behaviorTracker.calculationStartTime = null;
+    updateDisplay();
+    hideAllCards();
+}
+
+function backspace() {
+    behaviorTracker.backspaceCount++;
+    
+    if (currentInput.length > 1) {
+        currentInput = currentInput.slice(0, -1);
+    } else {
+        currentInput = '0';
+    }
+    
+    updateDisplay();
+    checkForConfusion();
+}
+
+function calculate() {
+    if (!expression) {
+        showMistake("No calculation to perform! 🤔");
+        return;
+    }
+    
+    const fullExpression = expression + ' ' + currentInput;
+    
+    // Calculate time taken
+    let timeTaken = 0;
+    if (behaviorTracker.calculationStartTime) {
+        timeTaken = (Date.now() - behaviorTracker.calculationStartTime) / 1000;
+        gameState.totalTime += timeTaken;
+        if (timeTaken < gameState.fastestTime) {
+            gameState.fastestTime = timeTaken;
+        }
+    }
+    
+    try {
+        const result = safeEvaluate(fullExpression);
+        
+        if (result === null || result === undefined || isNaN(result)) {
+            showMistake("Invalid calculation! Let me help you understand.");
+            behaviorTracker.invalidAttempts++;
+            behaviorTracker.consecutiveErrors++;
+            gameState.streak = 0;
+            return;
+        }
+        
+        lastResult = {
+            expression: fullExpression,
+            result: result,
+            operator: detectOperator(fullExpression),
+            time: timeTaken
+        };
+        
+        currentInput = String(result);
+        expression = '';
+        updateDisplay();
+        
+        // Track success
+        gameState.totalCalculations++;
+        gameState.correctCalculations++;
+        gameState.streak++;
+        if (gameState.streak > gameState.maxStreak) {
+            gameState.maxStreak = gameState.streak;
+        }
+        behaviorTracker.consecutiveErrors = 0;
+        behaviorTracker.calculationStartTime = null;
+        
+        // Add to history
+        gameState.history.unshift({
+            expression: fullExpression,
+            result: result,
+            time: timeTaken
+        });
+        if (gameState.history.length > 20) {
+            gameState.history.pop();
+        }
+        
+        // Award XP
+        let xpAmount = 10;
+        if (timeTaken < 5) {
+            xpAmount += 5; // Speed bonus
+            unlockAchievement('speed_demon');
+        }
+        awardXP(xpAmount, "Correct calculation!");
+        
+        // Check achievements
+        if (gameState.totalCalculations === 1) unlockAchievement('first_calc');
+        if (gameState.totalCalculations >= 100) unlockAchievement('master');
+        if (gameState.streak >= 5) unlockAchievement('streak_5');
+        
+        const hour = new Date().getHours();
+        if (hour >= 22 || hour <= 5) unlockAchievement('night_owl');
+        
+        // Show explanations
+        showExplanation();
+        showRealLifeExample();
+        detectMood();
+        updateStats();
+        updateHistory();
+        
+        // Speak result
+        if (isVoiceMode) {
+            speak(`The answer is ${result}`);
+        }
+        
+        saveGameState();
+        
+        // Confetti for milestones
+        if (gameState.totalCalculations % 10 === 0) {
+            createConfetti();
+        }
+        
+    } catch (error) {
+        showMistake("Something went wrong! Let's try again.");
+        behaviorTracker.invalidAttempts++;
+        trackWeakOperation(detectOperator(fullExpression));
+        gameState.streak = 0;
+    }
+}
+
+/* ============================
+   SAFE EVALUATION
+   ============================ */
+function safeEvaluate(expr) {
+    expr = expr.replace(/×/g, '*');
+    const tokens = expr.split(' ').filter(t => t);
+    
+    if (tokens.length < 3) return null;
+    
+    let result = parseFloat(tokens[0]);
+    
+    for (let i = 1; i < tokens.length; i += 2) {
+        const operator = tokens[i];
+        const operand = parseFloat(tokens[i + 1]);
+        
+        if (isNaN(operand)) return null;
+        
+        switch(operator) {
+            case '+':
+                result += operand;
+                break;
+            case '-':
+                result -= operand;
+                break;
+            case '*':
+            case '×':
+                result *= operand;
+                break;
+            case '/':
+                if (operand === 0) {
+                    showMistake("Division by zero is not allowed! 🚫");
+                    return null;
+                }
+                result /= operand;
+                break;
+            case '^':
+                result = Math.pow(result, operand);
+                break;
+            default:
+                return null;
+        }
+    }
+    
+    return Math.round(result * 100) / 100;
+}
+
+function detectOperator(expr) {
+    if (expr.includes('+')) return '+';
+    if (expr.includes('-')) return '-';
+    if (expr.includes('*') || expr.includes('×')) return '*';
+    if (expr.includes('/')) return '/';
+    if (expr.includes('^')) return '^';
+    return null;
+}
+
+/* ============================
+   STATS & ACHIEVEMENTS
+   ============================ */
+function updateStats() {
+    document.getElementById('streakValue').textContent = gameState.streak + '🔥';
+    
+    const accuracy = gameState.totalCalculations > 0 
+        ? Math.round((gameState.correctCalculations / gameState.totalCalculations) * 100)
+        : 0;
+    document.getElementById('accuracyValue').textContent = accuracy + '%';
+    
+    const avgSpeed = gameState.totalCalculations > 0
+        ? (gameState.totalTime / gameState.totalCalculations).toFixed(1)
+        : 0;
+    document.getElementById('speedValue').textContent = avgSpeed + 's';
+}
+
+function unlockAchievement(achievement) {
+    if (!gameState.achievements.includes(achievement)) {
+        gameState.achievements.push(achievement);
+        updateAchievements();
+        showAchievementNotification(achievement);
+        awardXP(20, 'Achievement unlocked!');
+        saveGameState();
+    }
+}
+
+function updateAchievements() {
+    gameState.achievements.forEach(ach => {
+        const elem = document.querySelector(`[data-achievement="${ach}"]`);
+        if (elem) {
+            elem.classList.add('unlocked');
+        }
+    });
+}
+
+function showAchievementNotification(achievement) {
+    const names = {
+        'first_calc': 'First Calculation! 🎯',
+        'streak_5': '5-Streak Master! 🔥',
+        'speed_demon': 'Speed Demon! ⚡',
+        'perfect_10': 'Perfect 10! 💯',
+        'night_owl': 'Night Owl! 🦉',
+        'master': 'Math Master! 👑',
+        'voice_user': 'Voice Pro! 🎤',
+        'explorer': 'Theme Explorer! 🗺️'
+    };
+    
+    const moodCard = document.getElementById('moodCard');
+    document.getElementById('moodEmoji').textContent = '🏆';
+    document.getElementById('moodText').textContent = 'Achievement: ' + names[achievement];
+    
+    moodCard.classList.add('celebration');
+    setTimeout(() => {
+        moodCard.classList.remove('celebration');
+    }, 2000);
+}
+
+function updateHistory() {
+    const list = document.getElementById('historyList');
+    list.innerHTML = '';
+    
+    gameState.history.slice(0, 10).forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'history-item';
+        div.innerHTML = `
+            <span>${item.expression} = ${item.result}</span>
+            <span>${item.time.toFixed(1)}s</span>
+        `;
+        div.onclick = () => {
+            currentInput = String(item.result);
+            updateDisplay();
+        };
+        list.appendChild(div);
+    });
+}
+
+/* ============================
+   CONFETTI EFFECT
+   ============================ */
+function createConfetti() {
+    for (let i = 0; i < 50; i++) {
+        setTimeout(() => {
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti';
+            confetti.style.left = Math.random() * 100 + '%';
+            confetti.style.background = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#f9ca24', '#f0932b'][Math.floor(Math.random() * 5)];
+            document.body.appendChild(confetti);
+            
+            setTimeout(() => confetti.remove(), 3000);
+        }, i * 30);
+    }
+}
+
+/* ============================
+   MOOD DETECTION SYSTEM
+   ============================ */
+function trackInputSpeed() {
+    const now = Date.now();
+    const timeDiff = now - behaviorTracker.lastInputTime;
+    behaviorTracker.inputSpeed.push(timeDiff);
+    
+    if (behaviorTracker.inputSpeed.length > 10) {
+        behaviorTracker.inputSpeed.shift();
+    }
+    
+    behaviorTracker.lastInputTime = now;
+}
+
+function detectMood() {
+    let mood = 'neutral';
+    let emoji = '😊';
+    let message = 'Great job!';
+    
+    const avgSpeed = behaviorTracker.inputSpeed.reduce((a, b) => a + b, 0) / behaviorTracker.inputSpeed.length;
+    
+    if (avgSpeed < 300 && behaviorTracker.backspaceCount < 3) {
+        mood = 'confident';
+        emoji = '😎';
+        message = 'You\'re on fire! Speed master!';
+    } else if (behaviorTracker.backspaceCount > 5) {
+        mood = 'confused';
+        emoji = '🤔';
+        message = 'Taking your time... that\'s okay!';
+    } else if (avgSpeed > 2000) {
+        mood = 'sleepy';
+        emoji = '😴';
+        message = 'Wake up! Let\'s stay focused!';
+    } else if (behaviorTracker.invalidAttempts > 2) {
+        mood = 'angry';
+        emoji = '😡';
+        message = 'Don\'t worry, mistakes help us learn!';
+    }
+    
+    document.getElementById('moodEmoji').textContent = emoji;
+    document.getElementById('moodText').textContent = message;
+    
+    applyMoodTheme(mood);
+    
+    behaviorTracker.backspaceCount = 0;
+    behaviorTracker.invalidAttempts = 0;
+}
+
+function applyMoodTheme(mood) {
+    const calcCard = document.getElementById('calculatorCard');
+    const moodCard = document.getElementById('moodCard');
+    
+    calcCard.classList.remove('mood-confident', 'mood-confused', 'mood-sleepy', 'mood-angry');
+    moodCard.classList.remove('mood-confident', 'mood-confused', 'mood-sleepy', 'mood-angry');
+    
+    if (mood !== 'neutral') {
+        calcCard.classList.add('mood-' + mood);
+        moodCard.classList.add('mood-' + mood);
+    }
+}
+
+/* ============================
+   AI TUTOR (Simulated)
+   ============================ */
+function sendToAI() {
+    const input = document.getElementById('chatInput').value;
+    if (!input.trim()) return;
+    
+    const messagesDiv = document.getElementById('chatMessages');
+    
+    // User message
+    const userMsg = document.createElement('div');
+    userMsg.className = 'chat-message user';
+    userMsg.textContent = input;
+    messagesDiv.appendChild(userMsg);
+    
+    // AI response (simulated)
+    setTimeout(() => {
+        const aiMsg = document.createElement('div');
+        aiMsg.className = 'chat-message ai';
+        aiMsg.textContent = getAIResponse(input);
+        messagesDiv.appendChild(aiMsg);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }, 1000);
+    
+    document.getElementById('chatInput').value = '';
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+}
+
+function getAIResponse(question) {
+    const responses = {
+        'help': 'I\'m here to help! What operation are you struggling with?',
+        'addition': 'Addition means combining two numbers together. Like 5 + 3 = 8!',
+        'subtraction': 'Subtraction means taking away. Like 10 - 4 = 6!',
+        'multiplication': 'Multiplication is repeated addition. 3 × 4 means adding 3 four times!',
+        'division': 'Division means splitting into equal groups. 12 ÷ 3 = 4!',
+        'default': 'Great question! Keep practicing and you\'ll master it!'
+    };
+    
+    const lower = question.toLowerCase();
+    for (let key in responses) {
+        if (lower.includes(key)) {
+            return responses[key];
+        }
+    }
+    return responses['default'];
+}
+
+/* ============================
+   EXPLANATION SYSTEM
+   ============================ */
+function showExplanation() {
+    if (!lastResult) return;
+    
+    const card = document.getElementById('explanationCard');
+    const content = document.getElementById('explanationContent');
+    const whyContent = document.getElementById('whyContent');
+    
+    const explanation = generateExplanation(lastResult);
+    const whyExplanation = generateWhyExplanation(lastResult.operator);
+    
+    content.innerHTML = explanation;
+    whyContent.innerHTML = whyExplanation;
+    
+    card.classList.remove('hidden');
+    card.classList.add('celebration');
+    
+    setTimeout(() => {
+        awardXP(5, "Learning bonus!");
+    }, 2000);
+}
+
+function generateExplanation(result) {
+    const parts = result.expression.split(' ').filter(t => t);
+    const num1 = parseFloat(parts[0]);
+    const operator = parts[1];
+    const num2 = parseFloat(parts[2]);
+    const answer = result.result;
+    
+    let steps = '';
+    
+    switch(operator) {
+        case '+':
+            steps = getAdditionExplanation(num1, num2, answer);
+            break;
+        case '-':
+            steps = getSubtractionExplanation(num1, num2, answer);
+            break;
+        case '*':
+        case '×':
+            steps = getMultiplicationExplanation(num1, num2, answer);
+            break;
+        case '/':
+            steps = getDivisionExplanation(num1, num2, answer);
+            break;
+    }
+    
+    return steps;
+}
+
+function getAdditionExplanation(a, b, result) {
+    const tone = getPersonalityTone();
+    return `
+        <div class="step">
+            <span class="step-label">Step 1:</span>
+            ${tone.step1_addition}
+        </div>
+        <div class="step">
+            <span class="step-label">Step 2:</span>
+            We have ${a} and we're adding ${b} more to it
+        </div>
+        <div class="step">
+            <span class="step-label">Step 3:</span>
+            ${a} + ${b} = ${result}
+        </div>
+        <div class="step">
+            <span class="step-label">✨ Result:</span>
+            ${tone.result_addition}
+        </div>
+    `;
+}
+
+function getSubtractionExplanation(a, b, result) {
+    const tone = getPersonalityTone();
+    return `
+        <div class="step">
+            <span class="step-label">Step 1:</span>
+            ${tone.step1_subtraction}
+        </div>
+        <div class="step">
+            <span class="step-label">Step 2:</span>
+            We have ${a} and we're taking away ${b}
+        </div>
+        <div class="step">
+            <span class="step-label">Step 3:</span>
+            ${a} - ${b} = ${result}
+        </div>
+        <div class="step">
+            <span class="step-label">✨ Result:</span>
+            ${tone.result_subtraction}
+        </div>
+    `;
+}
+
+function getMultiplicationExplanation(a, b, result) {
+    const tone = getPersonalityTone();
+    return `
+        <div class="step">
+            <span class="step-label">Step 1:</span>
+            ${tone.step1_multiplication}
+        </div>
+        <div class="step">
+            <span class="step-label">Step 2:</span>
+            We're adding ${a}, ${b} times
+        </div>
+        <div class="step">
+            <span class="step-label">Step 3:</span>
+            ${a} × ${b} = ${result}
+        </div>
+        <div class="step">
+            <span class="step-label">✨ Result:</span>
+            ${tone.result_multiplication}
+        </div>
+    `;
+}
+
+function getDivisionExplanation(a, b, result) {
+    const tone = getPersonalityTone();
+    return `
+        <div class="step">
+            <span class="step-label">Step 1:</span>
+            ${tone.step1_division}
+        </div>
+        <div class="step">
+            <span class="step-label">Step 2:</span>
+            We're splitting ${a} into ${b} equal groups
+        </div>
+        <div class="step">
+            <span class="step-label">Step 3:</span>
+            ${a} ÷ ${b} = ${result}
+        </div>
+        <div class="step">
+            <span class="step-label">✨ Result:</span>
+            Each group gets ${result}!
+        </div>
+    `;
+}
+
+function generateWhyExplanation(operator) {
+    const explanations = {
+        '+': 'Addition means combining or bringing things together. When you add, you\'re finding the total of two or more numbers. It\'s like putting apples in a basket!',
+        '-': 'Subtraction means taking away or finding the difference. When you subtract, you\'re removing some amount from a total. It\'s like eating cookies from a jar!',
+        '*': 'Multiplication is repeated addition. Instead of adding the same number many times, we multiply! It\'s a shortcut that makes math faster.',
+        '/': 'Division means splitting or sharing equally. When you divide, you\'re breaking something into equal parts. It\'s like sharing pizza with friends!'
+    };
+    
+    return explanations[operator] || 'This operation helps us solve problems!';
+}
+
+/* ============================
+   PERSONALITY TONE SYSTEM
+   ============================ */
+function getPersonalityTone() {
+    const tones = {
+        teacher: {
+            step1_addition: 'Addition ka matlab hai numbers ko jodna (combine karna)',
+            result_addition: 'Very good! You combined the numbers perfectly!',
+            step1_subtraction: 'Subtraction ka matlab hai numbers ko minus karna',
+            result_subtraction: 'Excellent! You found the difference correctly!',
+            step1_multiplication: 'Multiplication ka matlab hai repeated addition',
+            result_multiplication: 'Outstanding! You multiplied like a pro!',
+            step1_division: 'Division ka matlab hai equal groups banana'
+        },
+        friendly: {
+            step1_addition: 'Yaar, addition matlab numbers ko add karna! 🎉',
+            result_addition: 'Boom! You nailed it buddy! 🎯',
+            step1_subtraction: 'Bro, subtraction matlab minus karna hai',
+            result_subtraction: 'Awesome sauce! You got it! 🌟',
+            step1_multiplication: 'Dude, multiplication is just smart addition!',
+            result_multiplication: 'You\'re a math rockstar! 🎸',
+            step1_division: 'My friend, division is all about sharing equally!'
+        },
+        savage: {
+            step1_addition: 'Bruh, even a 5-year-old knows addition means adding! 😏',
+            result_addition: 'Finally! Took you long enough! 💪',
+            step1_subtraction: 'Subtraction = minus. Not rocket science! 🚀',
+            result_subtraction: 'Not bad... for a beginner! 😎',
+            step1_multiplication: 'Multiplication? It\'s just fancy addition, wake up!',
+            result_multiplication: 'Okay okay, I\'m impressed... slightly! 🔥',
+            step1_division: 'Division = sharing. Even toddlers can do this!'
+        },
+        ai: {
+            step1_addition: 'PROCESSING: Addition operation detected. Combining numerical values.',
+            result_addition: 'CALCULATION COMPLETE. Result verified. ✓',
+            step1_subtraction: 'PROCESSING: Subtraction operation detected. Computing difference.',
+            result_subtraction: 'OPERATION SUCCESSFUL. Accuracy: 100%. ✓',
+            step1_multiplication: 'PROCESSING: Multiplication detected. Executing repeated addition protocol.',
+            result_multiplication: 'MULTIPLICATION COMPLETE. All systems nominal. ✓',
+            step1_division: 'PROCESSING: Division operation. Initiating equal distribution algorithm.'
+        }
+    };
+    
+    return tones[personality] || tones.teacher;
+}
+
+/* ============================
+   REAL-LIFE EXAMPLES
+   ============================ */
+function showRealLifeExample() {
+    if (!lastResult) return;
+    
+    const card = document.getElementById('reallifeCard');
+    const content = document.getElementById('reallifeContent');
+    
+    const example = generateRealLifeExample(lastResult);
+    content.innerHTML = example;
+    
+    card.classList.remove('hidden');
+}
+
+function generateRealLifeExample(result) {
+    const parts = result.expression.split(' ').filter(t => t);
+    const num1 = Math.round(parseFloat(parts[0]));
+    const operator = parts[1];
+    const num2 = Math.round(parseFloat(parts[2]));
+    const answer = Math.round(result.result);
+    
+    const examples = {
+        '+': [
+            `🍎 Imagine you have ${num1} apples and your friend gives you ${num2} more apples. Now you have ${answer} apples total!`,
+            `💰 You have ${num1} rupees and you earn ${num2} more rupees. Total money = ${answer} rupees!`,
+            `⭐ You scored ${num1} points in game 1 and ${num2} points in game 2. Total score = ${answer} points!`
+        ],
+        '-': [
+            `🍪 You have ${num1} cookies and you eat ${num2} cookies. You're left with ${answer} cookies!`,
+            `📱 Your phone had ${num1}% battery and you used ${num2}%. Now you have ${answer}% left!`,
+            `🎮 You had ${num1} lives in a game and lost ${num2} lives. ${answer} lives remaining!`
+        ],
+        '*': [
+            `🍕 If one pizza has ${num1} slices and you order ${num2} pizzas, you get ${answer} slices total!`,
+            `👥 ${num1} students in each group and ${num2} groups means ${answer} students total!`,
+            `🚗 If you travel ${num1} km per day for ${num2} days, you travel ${answer} km total!`
+        ],
+        '/': [
+            `🍫 You have ${num1} chocolates to share equally among ${num2} friends. Each gets ${answer} chocolates!`,
+            `💵 You have ${num1} rupees to split equally among ${num2} people. Each person gets ${answer} rupees!`,
+            `📚 ${num1} books arranged on ${num2} shelves means ${answer} books per shelf!`
+        ]
+    };
+    
+    const exampleList = examples[operator] || [];
+    return exampleList[Math.floor(Math.random() * exampleList.length)] || 'Great calculation!';
+}
+
+/* ============================
+   CONFUSION DETECTOR
+   ============================ */
+function checkForConfusion() {
+    if (behaviorTracker.backspaceCount > 3 || behaviorTracker.consecutiveErrors > 1) {
+        showAutoHelp();
+    }
+}
+
+function showAutoHelp() {
+    const card = document.getElementById('autohelpCard');
+    const content = document.getElementById('autohelpContent');
+    
+    const tips = [
+        '💡 <strong>Tip:</strong> Take a deep breath! Math is easier when you\'re relaxed.',
+        '💡 <strong>Hint:</strong> Try breaking the problem into smaller steps.',
+        '💡 <strong>Remember:</strong> Addition (+) combines, Subtraction (-) takes away.',
+        '💡 <strong>Pro tip:</strong> For division, think "How many times does this fit?"',
+        '💡 <strong>Quick help:</strong> Multiplication is just repeated addition!',
+        '💡 <strong>Simple trick:</strong> Check your answer by working backwards!'
+    ];
+    
+    const randomTip = tips[Math.floor(Math.random() * tips.length)];
+    content.innerHTML = randomTip;
+    
+    card.classList.remove('hidden');
+}
+
+/* ============================
+   MISTAKE HANDLING
+   ============================ */
+function showMistake(message) {
+    const card = document.getElementById('mistakeCard');
+    const content = document.getElementById('mistakeContent');
+    
+    content.innerHTML = `
+        <div class="mistake-highlight">
+            <strong>⚠️ What went wrong:</strong><br>
+            ${message}
+        </div>
+        <div class="step">
+            <strong>💡 Common mistake students make:</strong><br>
+            Make sure you complete the calculation before pressing '='. 
+            The expression should have format: number → operator → number
+        </div>
+        <div class="step">
+            <strong>✅ Try this:</strong><br>
+            Press AC to clear and start fresh. Take your time!
+        </div>
+    `;
+    
+    card.classList.remove('hidden');
+    card.classList.add('shake');
+    
+    setTimeout(() => {
+        card.classList.remove('shake');
+    }, 500);
+}
+
+/* ============================
+   XP AND LEVELING SYSTEM
+   ============================ */
+function awardXP(amount, reason) {
+    gameState.xp += amount;
+    updateLevel();
+    updateXPDisplay();
+    saveGameState();
+    
+    const levelCard = document.querySelector('.level-card');
+    levelCard.classList.add('celebration');
+    setTimeout(() => {
+        levelCard.classList.remove('celebration');
+    }, 600);
+}
+
+function updateLevel() {
+    const xp = gameState.xp;
+    let newLevel = 'Noob';
+    
+    if (xp >= 500) newLevel = 'Legend';
+    else if (xp >= 300) newLevel = 'Genius';
+    else if (xp >= 200) newLevel = 'Topper';
+    else if (xp >= 100) newLevel = 'Thinker';
+    else if (xp >= 50) newLevel = 'Learner';
+    
+    if (newLevel !== gameState.level) {
+        gameState.level = newLevel;
+        showLevelUpMessage();
+    }
+}
+
+function showLevelUpMessage() {
+    const moodCard = document.getElementById('moodCard');
+    document.getElementById('moodEmoji').textContent = '🎉';
+    document.getElementById('moodText').textContent = `Level Up! You're now a ${gameState.level}!`;
+    
+    moodCard.classList.add('celebration');
+    createConfetti();
+    
+    if (isVoiceMode) {
+        speak(`Level up! You are now a ${gameState.level}`);
+    }
+    
+    setTimeout(() => {
+        moodCard.classList.remove('celebration');
+    }, 1000);
+}
+
+function updateXPDisplay() {
+    document.getElementById('levelBadge').textContent = gameState.level;
+    document.getElementById('xpText').textContent = gameState.xp + ' XP';
+    
+    const levelThresholds = { 'Noob': 50, 'Learner': 100, 'Thinker': 200, 'Topper': 300, 'Genius': 500 };
+    const nextLevel = levelThresholds[gameState.level] || 500;
+    const progress = (gameState.xp / nextLevel) * 100;
+    
+    document.getElementById('xpFill').style.width = Math.min(progress, 100) + '%';
+}
+
+/* ============================
+   MEMORY SYSTEM
+   ============================ */
+function trackWeakOperation(operator) {
+    if (!operator) return;
+    
+    if (!gameState.weakOperations[operator]) {
+        gameState.weakOperations[operator] = 0;
+    }
+    gameState.weakOperations[operator]++;
+    saveGameState();
+}
+
+function showMemoryRecall() {
+    if (Object.keys(gameState.weakOperations).length === 0) return;
+    
+    const card = document.getElementById('memoryCard');
+    const content = document.getElementById('memoryContent');
+    
+    const weakOp = Object.entries(gameState.weakOperations).sort((a, b) => b[1] - a[1])[0];
+    const opNames = { '+': 'addition', '-': 'subtraction', '*': 'multiplication', '/': 'division' };
+    
+    content.innerHTML = `
+        <p>🧠 <strong>I remember:</strong> Last time you struggled with <strong>${opNames[weakOp[0]]}</strong>.</p>
+        <p>💪 Don't worry! Practice makes perfect. Let's master it today!</p>
+    `;
+    
+    card.classList.remove('hidden');
+}
+
+/* ============================
+   UTILITY FUNCTIONS
+   ============================ */
+function hideAllCards() {
+    document.getElementById('explanationCard').classList.add('hidden');
+    document.getElementById('reallifeCard').classList.add('hidden');
+    document.getElementById('autohelpCard').classList.add('hidden');
+    document.getElementById('mistakeCard').classList.add('hidden');
+}
+
+// Initialize on load
+loadGameState();
+    </script>
+</body>
+</html>
